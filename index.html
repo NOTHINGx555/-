@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🫥</title>
+    <title> </title>
     <style>
         body {
             background-color: black; /* Czarny kolor tła */
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -18,6 +19,8 @@
 
         .container {
             text-align: center;
+            width: 90%; /* Szerokość dostosowana do urządzenia */
+            max-width: 1200px; /* Maksymalna szerokość dla dużych ekranów */
         }
 
         button {
@@ -25,8 +28,8 @@
             color: white; /* Biały kolor tekstu */
             border: 2px solid white; /* Biała ramka przycisku */
             border-radius: 5px;
-            padding: 12px; /* Odstęp wewnętrzny */
-            margin: 10px 0; /* Odstęp w pionie */
+            padding: 12px;
+            margin: 10px 0;
             cursor: pointer;
             font-size: 16px;
             width: 100%; /* Przycisk na całą szerokość */
@@ -34,13 +37,30 @@
         }
 
         button:hover {
-            background-color: white; /* Białe tło po najechaniu */
-            color: black; /* Czarny tekst po najechaniu */
+            background-color: white;
+            color: black;
         }
 
         button:active {
-            background-color: white; /* Białe tło po kliknięciu */
-            color: black; /* Czarny tekst po kliknięciu */
+            background-color: white;
+            color: black;
+        }
+
+        /* Ramka do wyświetlania stron */
+        .frame-container {
+            border: 5px solid white; /* Biała ramka */
+            width: 100%; /* Ramka dostosowana do szerokości urządzenia */
+            height: 70vh; /* Wysokość dostosowana do wysokości urządzenia */
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* Bez ramki wokół osadzonej strony */
         }
 
         /* Styl animacji strony */
@@ -50,7 +70,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: black; /* Czarny kolor tła */
+            background-color: black;
             z-index: 9999;
             transition: opacity 1s ease;
             opacity: 0;
@@ -58,7 +78,24 @@
         }
 
         .fade-out {
-            opacity: 1; /* Efekt zanikania */
+            opacity: 1;
+        }
+
+        /* Responsywność */
+        @media (max-width: 768px) {
+            button {
+                font-size: 14px; /* Mniejszy tekst dla mniejszych ekranów */
+            }
+
+            .frame-container {
+                height: 60vh; /* Zmniejszenie wysokości na urządzeniach mobilnych */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .frame-container {
+                height: 50vh; /* Dodatkowe zmniejszenie na bardzo małych urządzeniach */
+            }
         }
     </style>
 </head>
@@ -67,21 +104,30 @@
     <div id="overlay"></div> <!-- Nakładka animacji -->
 
     <div class="container">
-        <h1 style="font-size: 24px; margin: 0 0 20px 0; color: white;">Wybierz Stronę</h1>
-        <button onclick="navigateTo('https://www.comdotgame.com/play/fuck-your-girl')">1 game</button>
-        <button onclick="navigateTo('')">xxx</button>
-        <button onclick="navigateTo('')">xxx</button>
-        <button onclick="navigateTo('')">xxx</button>
-        <button onclick="navigateTo('')">xxx</button>
+        <h1 style="font-size: 24px; margin: 0 0 20px 0; color: white;">Wybierz Grę</h1>
+        <button onclick="connectTo('https://www.comdotgame.com/play/fuck-your-girl')">Game 1</button>
+        <button onclick="connectTo('https://example2.com')">Game 2</button>
+        <button onclick="connectTo('https://example3.com')">Game 3</button>
+        <button onclick="connectTo('https://example4.com')">Game 4</button>
+        <button onclick="connectTo('https://example5.com')">Game 5</button>
+
+        <!-- Ramka, gdzie będą wyświetlane osadzone strony -->
+        <div class="frame-container">
+            <iframe id="game-frame" src=""></iframe>
+        </div>
     </div>
 
     <script>
-        // Funkcja nawigacji z animacją
-        function navigateTo(url) {
+        // Funkcja do załadowania strony w ramce z animacją
+        function connectTo(url) {
             var overlay = document.getElementById('overlay');
+            var frame = document.getElementById('game-frame');
+            
             overlay.classList.add('fade-out'); // Dodanie klasy do efektu zanikania
+            
             setTimeout(function() {
-                window.location.href = url; // Przejście na nową stronę po animacji
+                frame.src = url; // Ładowanie nowej strony w ramce
+                overlay.classList.remove('fade-out'); // Usunięcie efektu zanikania po załadowaniu
             }, 1000); // 1 sekunda czasu animacji
         }
 
@@ -89,12 +135,6 @@
         window.onbeforeunload = function() {
             return "Czy na pewno chcesz opuścić tę stronę?";
         };
-
-        // Funkcja do ostrzeżenia przy zamykaniu strony
-        window.addEventListener('beforeunload', function (event) {
-            event.preventDefault();
-            event.returnValue = "Czy na pewno chcesz opuścić tę stronę?"; // Standardowa wiadomość przeglądarki
-        });
     </script>
 </body>
 </html>
