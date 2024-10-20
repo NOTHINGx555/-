@@ -6,7 +6,7 @@
     <title> </title>
     <style>
         body {
-            background-color: black; /* Czarny kolor tła */
+            background-color: black;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -14,26 +14,26 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden; /* Wyłączenie przewijania */
+            overflow: hidden;
         }
 
         .container {
             text-align: center;
-            width: 90%; /* Szerokość dostosowana do urządzenia */
-            max-width: 1200px; /* Maksymalna szerokość dla dużych ekranów */
+            width: 90%;
+            max-width: 1200px;
         }
 
         button {
-            background-color: transparent; /* Przezroczysty kolor tła */
-            color: white; /* Biały kolor tekstu */
-            border: 2px solid white; /* Biała ramka przycisku */
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
             border-radius: 5px;
             padding: 12px;
             margin: 10px 0;
             cursor: pointer;
             font-size: 16px;
-            width: 100%; /* Przycisk na całą szerokość */
-            transition: background-color 0.3s ease, color 0.3s ease; /* Płynne przejście kolorów */
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         button:hover {
@@ -48,9 +48,9 @@
 
         /* Ramka do wyświetlania stron */
         .frame-container {
-            border: 5px solid white; /* Biała ramka */
-            width: 100%; /* Ramka dostosowana do szerokości urządzenia */
-            height: 70vh; /* Wysokość dostosowana do wysokości urządzenia */
+            border: 5px solid white;
+            width: 100%;
+            height: 70vh;
             margin: 20px 0;
             display: flex;
             justify-content: center;
@@ -60,10 +60,9 @@
         iframe {
             width: 100%;
             height: 100%;
-            border: none; /* Bez ramki wokół osadzonej strony */
+            border: none;
         }
 
-        /* Styl animacji strony */
         #overlay {
             position: absolute;
             top: 0;
@@ -84,54 +83,61 @@
         /* Responsywność */
         @media (max-width: 768px) {
             button {
-                font-size: 14px; /* Mniejszy tekst dla mniejszych ekranów */
+                font-size: 14px;
             }
 
             .frame-container {
-                height: 60vh; /* Zmniejszenie wysokości na urządzeniach mobilnych */
+                height: 60vh;
             }
         }
 
         @media (max-width: 480px) {
             .frame-container {
-                height: 50vh; /* Dodatkowe zmniejszenie na bardzo małych urządzeniach */
+                height: 50vh;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="overlay"></div> <!-- Nakładka animacji -->
+    <div id="overlay"></div>
 
-    <div class="container">
+    <div class="container" id="button-container">
         <h1 style="font-size: 24px; margin: 0 0 20px 0; color: white;">Wybierz Grę</h1>
-        <button onclick="connectTo('https://www.comdotgame.com/play/fuck-your-girl')">Game 1</button>
-        <button onclick="connectTo('https://example2.com')">Game 2</button>
-        <button onclick="connectTo('https://example3.com')">Game 3</button>
-        <button onclick="connectTo('https://example4.com')">Game 4</button>
-        <button onclick="connectTo('https://example5.com')">Game 5</button>
+        <button onclick="loadGame('https://www.comdotgame.com/play/fuck-your-girl')">Game 1</button>
+        <button onclick="loadGame('https://example2.com')">Game 2</button>
+        <button onclick="loadGame('https://example3.com')">Game 3</button>
+    </div>
 
-        <!-- Ramka, gdzie będą wyświetlane osadzone strony -->
-        <div class="frame-container">
-            <iframe id="game-frame" src=""></iframe>
-        </div>
+    <!-- Ramka, gdzie będą wyświetlane osadzone strony -->
+    <div class="frame-container" id="frame-container">
+        <iframe id="game-frame" src=""></iframe>
     </div>
 
     <script>
-        // Funkcja do załadowania strony w ramce z animacją
-        function connectTo(url) {
+        // Funkcja do załadowania strony w pełnym ekranie
+        function loadGame(url) {
             var overlay = document.getElementById('overlay');
             var frame = document.getElementById('game-frame');
+            var buttonContainer = document.getElementById('button-container');
+            var frameContainer = document.getElementById('frame-container');
             
-            overlay.classList.add('fade-out'); // Dodanie klasy do efektu zanikania
-            
+            overlay.classList.add('fade-out'); // Efekt zanikania
+
             setTimeout(function() {
-                frame.src = url; // Ładowanie nowej strony w ramce
-                overlay.classList.remove('fade-out'); // Usunięcie efektu zanikania po załadowaniu
-            }, 1000); // 1 sekunda czasu animacji
+                frame.src = url; // Ładowanie nowej strony
+
+                // Usuwanie przycisków i ramki
+                buttonContainer.style.display = 'none';
+                frameContainer.style.border = 'none';
+                frameContainer.style.width = '100%';
+                frameContainer.style.height = '100vh'; // Cały ekran
+
+                overlay.classList.remove('fade-out');
+            }, 1000); // 1 sekunda animacji
         }
 
-        // Ostrzeżenie przy odświeżeniu strony lub zamknięciu
+        // Ostrzeżenie przy odświeżeniu lub zamknięciu
         window.onbeforeunload = function() {
             return "Czy na pewno chcesz opuścić tę stronę?";
         };
