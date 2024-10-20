@@ -65,6 +65,15 @@
             background-color: darkred;
         }
 
+        iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -72,32 +81,50 @@
     <div class="container">
         <!-- Menu z grami -->
         <div class="menu-container" id="menu-container">
-            <button class="game-button" onclick="openGame('https://www.newgrounds.com')">Game 1</button>
-            <button class="game-button" onclick="openGame('https://www.comdotgame.com')">Game 2</button>
-            <button class="game-button" onclick="openGame('https://armorgames.com')">Game 3</button>
-            <button class="game-button" onclick="openGame('https://kongregate.com')">Game 4</button>
-            <button class="game-button" onclick="openGame('https://miniclip.com')">Game 5</button>
+            <button class="game-button" onclick="loadGame('https://www.newgrounds.com')">Game 1</button>
+            <button class="game-button" onclick="loadGame('https://www.comdotgame.com')">Game 2</button>
+            <button class="game-button" onclick="loadGame('https://armorgames.com')">Game 3</button>
+            <button class="game-button" onclick="loadGame('https://kongregate.com')">Game 4</button>
+            <button class="game-button" onclick="loadGame('https://miniclip.com')">Game 5</button>
         </div>
 
         <!-- Przycisk do usunięcia -->
-        <button class="delete-button" onclick="deleteButtons()" id="delete-button">Delete Menu</button>
+        <button class="delete-button" onclick="deleteMenuAndLoadGame()" id="delete-button">Delete Menu & Load Game</button>
+
+        <!-- Element iframe do załadowania gry -->
+        <div id="game-frame-container"></div>
     </div>
 
     <script>
-        // Funkcja do otwierania gier w tym samym oknie
-        function openGame(gameUrl) {
-            // Przejście do nowej strony z grą
-            window.location.href = gameUrl;
+        let currentGameUrl = '';
+
+        // Funkcja do załadowania gry w iframe
+        function loadGame(gameUrl) {
+            currentGameUrl = gameUrl;
+            const gameFrameContainer = document.getElementById('game-frame-container');
+            
+            // Usunięcie istniejącego iframe, jeśli istnieje
+            gameFrameContainer.innerHTML = '';
+
+            // Tworzenie nowego iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = gameUrl;
+            gameFrameContainer.appendChild(iframe);
         }
 
-        // Funkcja do usunięcia przycisków menu i delete button
-        function deleteButtons() {
+        // Funkcja do usunięcia menu i załadowania gry
+        function deleteMenuAndLoadGame() {
             var menuContainer = document.getElementById('menu-container');
             var deleteButton = document.getElementById('delete-button');
-            
+
             // Usunięcie całego menu i przycisku delete
             menuContainer.remove();
             deleteButton.remove();
+
+            // Załadowanie aktualnie wybranej gry w iframe
+            if (currentGameUrl) {
+                loadGame(currentGameUrl);
+            }
         }
     </script>
 </body>
