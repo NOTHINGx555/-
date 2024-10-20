@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> </title>
+    <title>Game Menu</title>
     <style>
         body {
             background-color: black;
@@ -23,27 +23,16 @@
             max-width: 1200px;
         }
 
-        /* Styl ramki */
-        .frame-container {
-            border: 5px solid white;
-            width: 80%; /* Domyślna szerokość */
-            height: 60vh; /* Domyślna wysokość */
-            margin: 20px 0;
+        /* Styl menu gry */
+        .menu-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            position: relative;
-            overflow: hidden;
+            gap: 10px;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Styl przycisku */
-        button {
+        /* Styl przycisków gry */
+        .game-button {
             background-color: transparent;
             color: white;
             border: 2px solid white;
@@ -51,103 +40,65 @@
             padding: 12px;
             cursor: pointer;
             font-size: 18px;
-            width: 150px;
+            width: 200px;
             transition: background-color 0.3s ease, color 0.3s ease;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
-        button:hover {
+        .game-button:hover {
             background-color: white;
             color: black;
         }
 
-        /* Styl inputów */
-        .input-container {
-            margin-bottom: 20px;
-        }
-
-        input {
-            padding: 8px;
-            font-size: 16px;
-            margin: 0 10px;
-            width: 100px;
-            border-radius: 5px;
-            border: 1px solid white;
-        }
-
-        label {
+        /* Styl przycisku delete */
+        .delete-button {
+            background-color: red;
             color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            cursor: pointer;
             font-size: 18px;
+            margin-top: 20px;
         }
 
-        /* Responsywność */
-        @media (max-width: 768px) {
-            .frame-container {
-                height: 50vh;
-            }
+        .delete-button:hover {
+            background-color: darkred;
         }
 
-        @media (max-width: 480px) {
-            .frame-container {
-                height: 40vh;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Inputy do zmiany rozmiaru ramki -->
-        <div class="input-container">
-            <label for="frameWidth">Szerokość ramki (%)</label>
-            <input type="number" id="frameWidth" value="80" min="10" max="100" onchange="resizeFrame()">
-            
-            <label for="frameHeight">Wysokość ramki (vh)</label>
-            <input type="number" id="frameHeight" value="60" min="10" max="100" onchange="resizeFrame()">
+        <!-- Menu z grami -->
+        <div class="menu-container" id="menu-container">
+            <button class="game-button" onclick="openGame('https://www.newgrounds.com')">Game 1</button>
+            <button class="game-button" onclick="openGame('https://www.comdotgame.com')">Game 2</button>
+            <button class="game-button" onclick="openGame('https://armorgames.com')">Game 3</button>
+            <button class="game-button" onclick="openGame('https://kongregate.com')">Game 4</button>
+            <button class="game-button" onclick="openGame('https://miniclip.com')">Game 5</button>
         </div>
 
-        <!-- Ramka z grą -->
-        <div class="frame-container" id="frame-container">
-            <!-- Ramka załaduje się po naciśnięciu przycisku start -->
-        </div>
-
-        <!-- Przycisk startu -->
-        <button onclick="startGame()">Start</button>
+        <!-- Przycisk do usunięcia -->
+        <button class="delete-button" onclick="deleteButtons()" id="delete-button">Delete Menu</button>
     </div>
 
     <script>
-        // Funkcja do załadowania gry w ramce
-        function startGame() {
-            var frameContainer = document.getElementById('frame-container');
-            var button = document.querySelector('button');
-
-            // Ukrywanie przycisku startu
-            button.classList.add('hidden');
-
-            // Tworzenie elementu iframe, który załaduje grę
-            var iframe = document.createElement('iframe');
-            iframe.src = 'https://www.comdotgame.com/play/fuck-your-girl'; // Link do gry (zmień na właściwy)
-            frameContainer.appendChild(iframe);
+        // Funkcja do otwierania gier w tym samym oknie
+        function openGame(gameUrl) {
+            // Przejście do nowej strony z grą
+            window.location.href = gameUrl;
         }
 
-        // Funkcja do zmiany rozmiaru ramki
-        function resizeFrame() {
-            var frameContainer = document.getElementById('frame-container');
-            var frameWidth = document.getElementById('frameWidth').value;
-            var frameHeight = document.getElementById('frameHeight').value;
-
-            // Zastosowanie nowych rozmiarów do ramki
-            frameContainer.style.width = frameWidth + '%';
-            frameContainer.style.height = frameHeight + 'vh';
+        // Funkcja do usunięcia przycisków menu i delete button
+        function deleteButtons() {
+            var menuContainer = document.getElementById('menu-container');
+            var deleteButton = document.getElementById('delete-button');
+            
+            // Usunięcie całego menu i przycisku delete
+            menuContainer.remove();
+            deleteButton.remove();
         }
-
-        // Ostrzeżenie przy odświeżeniu lub zamknięciu
-        window.onbeforeunload = function() {
-            return "Czy na pewno chcesz opuścić tę stronę?";
-        };
     </script>
 </body>
 </html>
