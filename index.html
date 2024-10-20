@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Strona</title>
+    <title>🫥</title>
     <style>
         body {
             background-color: black; /* Czarny kolor tła */
@@ -12,50 +12,89 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif; /* Prosta czcionka */
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Wyłączenie przewijania */
         }
 
         .container {
-            background-color: white; /* Biała ramka */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            max-width: 400px; /* Umożliwia dopasowanie do różnych urządzeń */
-            width: 100%; /* Umożliwia responsywność */
-            text-align: center; /* Wyśrodkowanie tekstu */
+            text-align: center;
         }
 
         button {
-            background-color: #007BFF; /* Kolor przycisków */
-            color: white; /* Kolor tekstu */
-            border: none;
+            background-color: transparent; /* Przezroczysty kolor tła */
+            color: white; /* Biały kolor tekstu */
+            border: 2px solid white; /* Biała ramka przycisku */
             border-radius: 5px;
-            padding: 12px; /* W większej wielkości */
+            padding: 12px; /* Odstęp wewnętrzny */
             margin: 10px 0; /* Odstęp w pionie */
             cursor: pointer;
             font-size: 16px;
             width: 100%; /* Przycisk na całą szerokość */
-            transition: background-color 0.3s ease; /* Płynne przejście koloru */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Płynne przejście kolorów */
         }
 
         button:hover {
-            background-color: #0056b3; /* Kolor przycisku po najechaniu */
+            background-color: white; /* Białe tło po najechaniu */
+            color: black; /* Czarny tekst po najechaniu */
+        }
+
+        button:active {
+            background-color: white; /* Białe tło po kliknięciu */
+            color: black; /* Czarny tekst po kliknięciu */
+        }
+
+        /* Styl animacji strony */
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black; /* Czarny kolor tła */
+            z-index: 9999;
+            transition: opacity 1s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fade-out {
+            opacity: 1; /* Efekt zanikania */
         }
     </style>
 </head>
 <body>
+
+    <div id="overlay"></div> <!-- Nakładka animacji -->
+
     <div class="container">
-        <h1 style="font-size: 24px; margin: 0 0 20px 0;">Wybierz Stronę</h1>
-        <button onclick="window.location.href='https://example1.com'">Web 1</button>
-        <button onclick="window.location.href='https://example2.com'">Web 2</button>
-        <button onclick="window.location.href='https://example3.com'">Web 3</button>
-        <button onclick="window.location.href='https://example4.com'">Web 4</button>
-        <button onclick="window.location.href='https://example5.com'">Web 5</button>
-        <button onclick="window.location.href='https://example6.com'">Web 6</button>
-        <button onclick="window.location.href='https://example7.com'">Web 7</button>
-        <button onclick="window.location.href='https://example8.com'">Web 8</button>
-        <button onclick="window.location.href='https://example9.com'">Web 9</button>
-        <button onclick="window.location.href='https://example10.com'">Web 10</button>
+        <h1 style="font-size: 24px; margin: 0 0 20px 0; color: white;">Wybierz Stronę</h1>
+        <button onclick="navigateTo('https://www.comdotgame.com/play/fuck-your-girl')">1 game</button>
+        <button onclick="navigateTo('')">xxx</button>
+        <button onclick="navigateTo('')">xxx</button>
+        <button onclick="navigateTo('')">xxx</button>
+        <button onclick="navigateTo('')">xxx</button>
     </div>
+
+    <script>
+        // Funkcja nawigacji z animacją
+        function navigateTo(url) {
+            var overlay = document.getElementById('overlay');
+            overlay.classList.add('fade-out'); // Dodanie klasy do efektu zanikania
+            setTimeout(function() {
+                window.location.href = url; // Przejście na nową stronę po animacji
+            }, 1000); // 1 sekunda czasu animacji
+        }
+
+        // Ostrzeżenie przy odświeżeniu strony lub zamknięciu
+        window.onbeforeunload = function() {
+            return "Czy na pewno chcesz opuścić tę stronę?";
+        };
+
+        // Funkcja do ostrzeżenia przy zamykaniu strony
+        window.addEventListener('beforeunload', function (event) {
+            event.preventDefault();
+            event.returnValue = "Czy na pewno chcesz opuścić tę stronę?"; // Standardowa wiadomość przeglądarki
+        });
+    </script>
 </body>
 </html>
