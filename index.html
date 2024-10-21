@@ -81,7 +81,7 @@
     <div class="container">
         <!-- Menu z grami -->
         <div class="menu-container" id="menu-container">
-            <button class="game-button" onclick="loadGame('https://www.newgrounds.com')">Game 1</button>
+            <button class="game-button" onclick="loadGame('https://www.comdotgame.com/play/fuck-your-girl')">Game 1</button>
             <button class="game-button" onclick="loadGame('https://www.comdotgame.com')">Game 2</button>
             <button class="game-button" onclick="loadGame('https://armorgames.com')">Game 3</button>
             <button class="game-button" onclick="loadGame('https://kongregate.com')">Game 4</button>
@@ -89,18 +89,15 @@
         </div>
 
         <!-- Przycisk do usunięcia -->
-        <button class="delete-button" onclick="deleteMenuAndLoadGame()" id="delete-button">Delete Menu & Load Game</button>
+        <button class="delete-button" onclick="deleteAllButtons()">Delete All Buttons</button>
 
         <!-- Element iframe do załadowania gry -->
         <div id="game-frame-container"></div>
     </div>
 
     <script>
-        let currentGameUrl = '';
-
         // Funkcja do załadowania gry w iframe
         function loadGame(gameUrl) {
-            currentGameUrl = gameUrl;
             const gameFrameContainer = document.getElementById('game-frame-container');
             
             // Usunięcie istniejącego iframe, jeśli istnieje
@@ -112,19 +109,10 @@
             gameFrameContainer.appendChild(iframe);
         }
 
-        // Funkcja do usunięcia menu i załadowania gry
-        function deleteMenuAndLoadGame() {
+        // Funkcja do usunięcia wszystkich przycisków gry
+        function deleteAllButtons() {
             var menuContainer = document.getElementById('menu-container');
-            var deleteButton = document.getElementById('delete-button');
-
-            // Usunięcie całego menu i przycisku delete
-            menuContainer.remove();
-            deleteButton.remove();
-
-            // Załadowanie aktualnie wybranej gry w iframe
-            if (currentGameUrl) {
-                loadGame(currentGameUrl);
-            }
+            menuContainer.remove(); // Usunięcie całego menu
         }
     </script>
 </body>
