@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Menu</title>
+    <title> </title>
     <style>
         body {
             background-color: black;
@@ -89,7 +89,7 @@
         </div>
 
         <!-- Przycisk do usunięcia -->
-        <button class="delete-button" onclick="deleteAllButtons()">Delete All Buttons</button>
+        <button class="delete-button" id="delete-button" onclick="deleteAllButtons()">Delete All Buttons</button>
 
         <!-- Element iframe do załadowania gry -->
         <div id="game-frame-container"></div>
@@ -109,10 +109,20 @@
             gameFrameContainer.appendChild(iframe);
         }
 
-        // Funkcja do usunięcia wszystkich przycisków gry
+        // Funkcja do usunięcia wszystkich przycisków gry, w tym przycisku "Delete All Buttons"
         function deleteAllButtons() {
-            var menuContainer = document.getElementById('menu-container');
-            menuContainer.remove(); // Usunięcie całego menu
+            const menuContainer = document.getElementById('menu-container');
+            const deleteButton = document.getElementById('delete-button');
+            
+            // Usunięcie menu z grami
+            if (menuContainer) {
+                menuContainer.remove();
+            }
+            
+            // Usunięcie przycisku "Delete All Buttons"
+            if (deleteButton) {
+                deleteButton.remove();
+            }
         }
     </script>
 </body>
