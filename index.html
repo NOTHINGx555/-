@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odtwarzacz Wideo</title>
     <style>
-        /* Ogólne stylowanie */
+        /* General styling */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -22,198 +21,223 @@
             padding: 20px;
         }
 
-        h1 {
-            color: #ffffff; /* Zmiana koloru nagłówka na biały */
-            margin-bottom: 20px;
+        /* Status message styling */
+        .status-message {
+            padding: 10px 20px;
+            background-color: #333;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #fff;
+            font-size: 18px;
         }
 
-        /* Kontener na wideo */
-        .video-container {
-            width: 100%;
-            max-width: 800px;
+        /* Rainbow effect for the frame */
+        .frame-container {
+            width: 90%;
+            max-width: 500px;
+            padding: 10px;
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            display: none; /* Domyślnie ukryte */
+            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            border-radius: 25px;
+            animation: rainbow 5s linear infinite;
+            position: relative;
         }
 
-        /* Styl input i przycisków */
-        .input-group {
-            display: flex;
-            width: 100%;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
+        /* Rainbow effect for input box */
         input[type="text"] {
-            flex: 1;
+            width: 100%;
             padding: 12px;
-            border: 1px solid #333;
-            border-radius: 25px;
+            border: 2px solid transparent;
             outline: none;
-            background-color: #2b2b2b;
-            color: #f1f1f1;
-            font-size: 14px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #ffffff; /* Zmiana koloru przycisku na biały */
-            color: #121212; /* Ciemny tekst */
-            border: none;
             border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #f0f0f0; /* Jasnoszary przy hoverze */
-        }
-
-        .toggle-button {
-            background-color: #444;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
             font-size: 14px;
-            margin-top: 20px;
+            margin-bottom: 10px;
+            background-color: rgba(43, 43, 43, 0.8);
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s ease;
         }
 
-        /* Styl odtwarzacza wideo */
+        /* Video player styling */
         iframe {
             width: 100%;
-            height: 450px;
-            border-radius: 10px;
+            aspect-ratio: 16 / 9;
+            border-radius: 15px;
             border: none;
-            transition: opacity 0.5s ease;
+            display: none;
         }
 
-        /* Styl galerii miniaturek */
-        .video-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 800px;
-            margin: 20px 0;
+        /* Link status styling */
+        .link-status {
+            color: #ff0000; /* Red for errors */
+            margin-top: 10px;
         }
 
-        .video-thumbnail {
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-            border-radius: 10px;
-            background-color: #1e1e1e;
-            transition: transform 0.3s;
+        .link-status.valid {
+            color: #00ff00; /* Green for valid links */
         }
 
-        .video-thumbnail:hover {
-            transform: scale(1.05);
-        }
-
-        .video-thumbnail img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
-            background-color: rgba(0, 0, 0, 0.5);
+        /* Button styling */
+        .button {
+            margin-top: 15px;
             padding: 10px 20px;
+            background-color: #ff6600;
+            color: #ffffff;
+            font-size: 14px;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s;
         }
 
-        .play-button:hover {
-            background-color: rgba(0, 0, 0, 0.7);
+        .button:hover {
+            background-color: #cc5200;
+        }
+
+        /* Circular button styling */
+        .open-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ff6600;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            bottom: -25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .open-button:hover {
+            background-color: #cc5200;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        input[type="text"]:focus {
+            background-color: rgba(43, 43, 43, 1);
         }
     </style>
 </head>
 <body>
-    <h1>Odtwarzacz Wideo Pornhub i TikTok</h1>
 
-    <!-- Panel wideo -->
-    <div class="video-container" id="videoContainer">
-        <div class="input-group">
-            <input type="text" id="videoUrl" placeholder="Wklej link do wideo z Pornhub lub TikTok">
-            <button onclick="loadVideo()">Odtwórz</button>
-            <button onclick="pasteFromClipboard()">Wklej</button> <!-- Przycisk do wklejania -->
-            <button onclick="deleteVideo()">Usuń Wideo</button> <!-- Przycisk do usunięcia -->
+    <!-- Status message -->
+    <div id="statusMessage" class="status-message">Checking browsing mode...</div>
+
+    <!-- Frame container -->
+    <div class="frame-container">
+        <!-- Video panel -->
+        <div class="video-container" id="videoContainer">
+            <input type="text" id="videoUrl" placeholder="Wklej link do wideo z Pornhub" oninput="verifyLink()">
+            <span class="link-status" id="linkStatus"></span>
+            <iframe id="videoPlayer" allowfullscreen></iframe>
         </div>
-        <iframe id="videoPlayer" allowfullscreen></iframe>
+        <!-- Button to open Pornhub in new tab -->
+        <button class="open-button" onclick="openPornhub()">V</button>
     </div>
 
-    <!-- Galeria miniaturek -->
-    <div class="video-gallery">
-        <div class="video-thumbnail" onclick="playVideo('ph123456')">
-            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
-            <div class="play-button">Odtwórz</div>
-        </div>
-        <div class="video-thumbnail" onclick="playVideo('ph654321')">
-            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
-            <div class="play-button">Odtwórz</div>
-        </div>
-        <div class="video-thumbnail" onclick="playTikTokVideo('https://www.tiktok.com/@example/video/1234567890')">
-            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
-            <div class="play-button">Odtwórz TikTok</div>
-        </div>
-        <!-- Dodaj więcej miniaturek według potrzeby -->
-    </div>
-
-    <!-- Przycisk minimalizacji -->
-    <div class="toggle-button" onclick="toggleVideoPanel()">Pokaż/Ukryj Panel Wideo</div>
+    <!-- Close and Copy buttons -->
+    <button class="button" onclick="closePage()">Close</button>
+    <button class="button" onclick="copyLink()">Copy Link</button>
 
     <script>
-        function loadVideo() {
-            const url = document.getElementById("videoUrl").value;
-            const videoPlayer = document.getElementById("videoPlayer");
-            const videoContainer = document.getElementById("videoContainer");
+        // Check if the user is in incognito mode
+        function checkIncognitoMode() {
+            const statusMessage = document.getElementById("statusMessage");
 
-            // Sprawdza, czy link pochodzi z Pornhub lub TikTok
+            // Attempting to use FileSystem API (restricted in incognito mode)
+            const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+            if (!fs) {
+                statusMessage.textContent = "Unable to determine browsing mode.";
+                return;
+            }
+
+            fs(window.TEMPORARY, 100, function() {
+                statusMessage.textContent = "Jesteś w normalnym trybie.";
+            }, function() {
+                statusMessage.textContent = "Jesteś w trybie incognito.";
+            });
+        }
+
+        function loadVideo(url) {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const linkStatus = document.getElementById("linkStatus");
+
             if (url.includes("pornhub.com")) {
                 const videoId = url.split("viewkey=")[1];
-                videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
-                videoContainer.style.display = "flex"; // Pokazuje kontener wideo
-            } else if (url.includes("tiktok.com")) {
-                const videoId = url.split("/video/")[1].split("?")[0]; // Pobiera ID wideo z TikTok
-                videoPlayer.src = `https://www.tiktok.com/embed/${videoId}`; // Używa embed URL TikTok
-                videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+                if (videoId) {
+                    videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
+                    videoPlayer.style.display = "block";
+                    linkStatus.textContent = "Prawidłowy link.";
+                    linkStatus.className = "link-status valid";
+                    hideLinkStatusAfterDelay();
+                } else {
+                    videoPlayer.style.display = "none";
+                    linkStatus.textContent = "Nie znaleziono identyfikatora wideo.";
+                    linkStatus.className = "link-status";
+                    hideLinkStatusAfterDelay();
+                }
             } else {
-                alert("Obsługiwane są tylko wideo z Pornhub i TikTok.");
+                videoPlayer.style.display = "none";
+                linkStatus.textContent = "Nieprawidłowy link. Upewnij się, że link jest z Pornhub.";
+                linkStatus.className = "link-status";
+                hideLinkStatusAfterDelay();
             }
         }
 
-        function playVideo(videoId) {
-            const videoPlayer = document.getElementById("videoPlayer");
-            const videoContainer = document.getElementById("videoContainer");
-
-            // Ustawia źródło iframe i pokazuje odtwarzacz
-            videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
-            videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+        function verifyLink() {
+            const url = document.getElementById("videoUrl").value;
+            loadVideo(url);
         }
 
-        function playTikTokVideo(url) {
-            const videoPlayer = document.getElementById("videoPlayer");
-            const videoContainer = document.getElementById("videoContainer");
-
-            // Ustawia źródło iframe i pokazuje odtwarzacz
-            const videoId = url.split("/video/")[1]; // Pobiera ID wideo z TikTok
-            videoPlayer.src = `https://www.tiktok.com/embed/${videoId}`; // Używa embed URL TikTok
-            videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+        function hideLinkStatusAfterDelay() {
+            const linkStatus = document.getElementById("linkStatus");
+            setTimeout(() => {
+                linkStatus.textContent = "";
+                linkStatus.className = "link-status";
+            }, 500);
         }
 
-        function deleteVideo() {
-            const videoPlayer = document.getElementById("videoPlayer");
-            const videoContainer = document.getElementById("videoContainer");
+        // Opens Pornhub in a new tab
+        function openPornhub() {
+            window.open("https://www.pornhub.com", "_blank");
+        }
 
-            // Usuwa wideo i ukrywa kontener
-            videoPlayer.src
+        // Close the page
+        function closePage() {
+            window.open("", "_self").close();
+        }
+
+        // Copy the link to clipboard
+        function copyLink() {
+            const link = "https://nothingx555.github.io/test/";
+            navigator.clipboard.writeText(link).then(function() {
+                alert("Link skopiowany do schowka!");
+            }).catch(function(err) {
+                alert("Nie udało się skopiować linku: " + err);
+            });
+        }
+
+        // Run incognito check on page load
+        window.onload = function() {
+            checkIncognitoMode();
+        };
+    </script>
+</body>
+</html>
