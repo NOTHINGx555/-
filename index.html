@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Wideo</title>
+    <style>
+        /* Ustawienia ogólne */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #f1f1f1;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffa31a;
+            margin-bottom: 20px;
+        }
+
+        .video-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .video-thumbnail {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: #1e1e1e;
+            transition: transform 0.3s;
+        }
+
+        .video-thumbnail:hover {
+            transform: scale(1.05);
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .play-button:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .video-frame {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: none;
+            display: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .video-frame.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Panel Wideo</h1>
+    <div class="video-gallery">
+        <!-- Miniaturki wideo - Ustaw identyfikatory z Pornhub -->
+        <div class="video-thumbnail" onclick="playVideo('ph123456')">
+            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
+            <div class="play-button">Odtwórz</div>
+        </div>
+        <div class="video-thumbnail" onclick="playVideo('ph654321')">
+            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
+            <div class="play-button">Odtwórz</div>
+        </div>
+        <!-- Dodaj więcej miniaturek tutaj -->
+    </div>
+
+    <!-- Kontener dla wideo -->
+    <iframe id="videoPlayer" class="video-frame" allowfullscreen></iframe>
+
+    <script>
+        function playVideo(videoId) {
+            const videoPlayer = document.getElementById("videoPlayer");
+            videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
+            videoPlayer.classList.add("show");
+        }
+    </script>
+</body>
+</html>
