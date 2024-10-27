@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Wideo</title>
+    <title>Odtwarzacz Wideo</title>
     <style>
-        /* Ustawienia ogólne */
+        /* Ogólne stylowanie */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -23,17 +23,82 @@
         }
 
         h1 {
-            color: #ffa31a;
+            color: #ffffff; /* Zmiana koloru nagłówka na biały */
             margin-bottom: 20px;
         }
 
+        /* Kontener na wideo */
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            display: none; /* Domyślnie ukryte */
+        }
+
+        /* Styl input i przycisków */
+        .input-group {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 25px;
+            outline: none;
+            background-color: #2b2b2b;
+            color: #f1f1f1;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #ffffff; /* Zmiana koloru przycisku na biały */
+            color: #121212; /* Ciemny tekst */
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #f0f0f0; /* Jasnoszary przy hoverze */
+        }
+
+        .toggle-button {
+            background-color: #444;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Styl odtwarzacza wideo */
+        iframe {
+            width: 100%;
+            height: 450px;
+            border-radius: 10px;
+            border: none;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Styl galerii miniaturek */
         .video-gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
             width: 100%;
             max-width: 800px;
-            margin-bottom: 40px;
+            margin: 20px 0;
         }
 
         .video-thumbnail {
@@ -71,28 +136,24 @@
         .play-button:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
-
-        .video-frame {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            margin-top: 20px;
-            border-radius: 10px;
-            border: none;
-            display: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .video-frame.show {
-            display: block;
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
-    <h1>Panel Wideo</h1>
+    <h1>Odtwarzacz Wideo Pornhub i TikTok</h1>
+
+    <!-- Panel wideo -->
+    <div class="video-container" id="videoContainer">
+        <div class="input-group">
+            <input type="text" id="videoUrl" placeholder="Wklej link do wideo z Pornhub lub TikTok">
+            <button onclick="loadVideo()">Odtwórz</button>
+            <button onclick="pasteFromClipboard()">Wklej</button> <!-- Przycisk do wklejania -->
+            <button onclick="deleteVideo()">Usuń Wideo</button> <!-- Przycisk do usunięcia -->
+        </div>
+        <iframe id="videoPlayer" allowfullscreen></iframe>
+    </div>
+
+    <!-- Galeria miniaturek -->
     <div class="video-gallery">
-        <!-- Miniaturki wideo - Ustaw identyfikatory z Pornhub -->
         <div class="video-thumbnail" onclick="playVideo('ph123456')">
             <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
             <div class="play-button">Odtwórz</div>
@@ -101,18 +162,58 @@
             <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
             <div class="play-button">Odtwórz</div>
         </div>
-        <!-- Dodaj więcej miniaturek tutaj -->
+        <div class="video-thumbnail" onclick="playTikTokVideo('https://www.tiktok.com/@example/video/1234567890')">
+            <img src="https://via.placeholder.com/150x100" alt="Thumbnail">
+            <div class="play-button">Odtwórz TikTok</div>
+        </div>
+        <!-- Dodaj więcej miniaturek według potrzeby -->
     </div>
 
-    <!-- Kontener dla wideo -->
-    <iframe id="videoPlayer" class="video-frame" allowfullscreen></iframe>
+    <!-- Przycisk minimalizacji -->
+    <div class="toggle-button" onclick="toggleVideoPanel()">Pokaż/Ukryj Panel Wideo</div>
 
     <script>
+        function loadVideo() {
+            const url = document.getElementById("videoUrl").value;
+            const videoPlayer = document.getElementById("videoPlayer");
+            const videoContainer = document.getElementById("videoContainer");
+
+            // Sprawdza, czy link pochodzi z Pornhub lub TikTok
+            if (url.includes("pornhub.com")) {
+                const videoId = url.split("viewkey=")[1];
+                videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
+                videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+            } else if (url.includes("tiktok.com")) {
+                const videoId = url.split("/video/")[1].split("?")[0]; // Pobiera ID wideo z TikTok
+                videoPlayer.src = `https://www.tiktok.com/embed/${videoId}`; // Używa embed URL TikTok
+                videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+            } else {
+                alert("Obsługiwane są tylko wideo z Pornhub i TikTok.");
+            }
+        }
+
         function playVideo(videoId) {
             const videoPlayer = document.getElementById("videoPlayer");
+            const videoContainer = document.getElementById("videoContainer");
+
+            // Ustawia źródło iframe i pokazuje odtwarzacz
             videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
-            videoPlayer.classList.add("show");
+            videoContainer.style.display = "flex"; // Pokazuje kontener wideo
         }
-    </script>
-</body>
-</html>
+
+        function playTikTokVideo(url) {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const videoContainer = document.getElementById("videoContainer");
+
+            // Ustawia źródło iframe i pokazuje odtwarzacz
+            const videoId = url.split("/video/")[1]; // Pobiera ID wideo z TikTok
+            videoPlayer.src = `https://www.tiktok.com/embed/${videoId}`; // Używa embed URL TikTok
+            videoContainer.style.display = "flex"; // Pokazuje kontener wideo
+        }
+
+        function deleteVideo() {
+            const videoPlayer = document.getElementById("videoPlayer");
+            const videoContainer = document.getElementById("videoContainer");
+
+            // Usuwa wideo i ukrywa kontener
+            videoPlayer.src
