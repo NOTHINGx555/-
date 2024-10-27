@@ -21,16 +21,6 @@
             padding: 20px;
         }
 
-        /* Status message styling */
-        .status-message {
-            padding: 10px 20px;
-            background-color: #333;
-            border-radius: 5px;
-            margin-top: 10px;
-            color: #fff;
-            font-size: 18px;
-        }
-
         /* Rainbow effect for the frame */
         .frame-container {
             width: 90%;
@@ -75,32 +65,15 @@
 
         /* Link status styling */
         .link-status {
-            color: #ff0000; /* Red for errors */
+            color: #ff0000;
             margin-top: 10px;
         }
 
         .link-status.valid {
-            color: #00ff00; /* Green for valid links */
+            color: #00ff00;
         }
 
         /* Button styling */
-        .button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #ff6600;
-            color: #ffffff;
-            font-size: 14px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .button:hover {
-            background-color: #cc5200;
-        }
-
-        /* Circular button styling */
         .open-button {
             width: 50px;
             height: 50px;
@@ -137,14 +110,11 @@
 </head>
 <body>
 
-    <!-- Status message -->
-    <div id="statusMessage" class="status-message">Checking browsing mode...</div>
-
     <!-- Frame container -->
     <div class="frame-container">
         <!-- Video panel -->
         <div class="video-container" id="videoContainer">
-            <input type="text" id="videoUrl" placeholder="Wklej link do wideo z Pornhub" oninput="verifyLink()">
+            <input type="text" id="videoUrl" placeholder="Paste Pornhub video link" oninput="verifyLink()">
             <span class="link-status" id="linkStatus"></span>
             <iframe id="videoPlayer" allowfullscreen></iframe>
         </div>
@@ -152,29 +122,7 @@
         <button class="open-button" onclick="openPornhub()">V</button>
     </div>
 
-    <!-- Close and Copy buttons -->
-    <button class="button" onclick="closePage()">Close</button>
-    <button class="button" onclick="copyLink()">Copy Link</button>
-
     <script>
-        // Check if the user is in incognito mode
-        function checkIncognitoMode() {
-            const statusMessage = document.getElementById("statusMessage");
-
-            // Attempting to use FileSystem API (restricted in incognito mode)
-            const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-            if (!fs) {
-                statusMessage.textContent = "Unable to determine browsing mode.";
-                return;
-            }
-
-            fs(window.TEMPORARY, 100, function() {
-                statusMessage.textContent = "Jesteś w normalnym trybie.";
-            }, function() {
-                statusMessage.textContent = "Jesteś w trybie incognito.";
-            });
-        }
-
         function loadVideo(url) {
             const videoPlayer = document.getElementById("videoPlayer");
             const linkStatus = document.getElementById("linkStatus");
@@ -184,18 +132,18 @@
                 if (videoId) {
                     videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
                     videoPlayer.style.display = "block";
-                    linkStatus.textContent = "Prawidłowy link.";
+                    linkStatus.textContent = "Valid link.";
                     linkStatus.className = "link-status valid";
                     hideLinkStatusAfterDelay();
                 } else {
                     videoPlayer.style.display = "none";
-                    linkStatus.textContent = "Nie znaleziono identyfikatora wideo.";
+                    linkStatus.textContent = "Video ID not found.";
                     linkStatus.className = "link-status";
                     hideLinkStatusAfterDelay();
                 }
             } else {
                 videoPlayer.style.display = "none";
-                linkStatus.textContent = "Nieprawidłowy link. Upewnij się, że link jest z Pornhub.";
+                linkStatus.textContent = "Invalid link. Ensure it's from Pornhub.";
                 linkStatus.className = "link-status";
                 hideLinkStatusAfterDelay();
             }
@@ -219,25 +167,13 @@
             window.open("https://www.pornhub.com", "_blank");
         }
 
-        // Close the page
-        function closePage() {
-            window.open("", "_self").close();
-        }
-
-        // Copy the link to clipboard
-        function copyLink() {
-            const link = "https://nothingx555.github.io/test/";
-            navigator.clipboard.writeText(link).then(function() {
-                alert("Link skopiowany do schowka!");
-            }).catch(function(err) {
-                alert("Nie udało się skopiować linku: " + err);
-            });
-        }
-
-        // Run incognito check on page load
-        window.onload = function() {
-            checkIncognitoMode();
-        };
+        // Block all links and redirections
+        document.addEventListener('click', function(event) {
+            const target = event.target.closest('a');
+            if (target && target.href.includes('pornhub.com')) {
+                event.preventDefault(); // Block direct link opening
+            }
+        });
     </script>
 </body>
 </html>
