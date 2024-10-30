@@ -21,6 +21,7 @@
             padding: 20px;
         }
 
+        /* Rainbow effect for the frame */
         .frame-container {
             width: 90%;
             max-width: 500px;
@@ -37,6 +38,7 @@
             position: relative;
         }
 
+        /* Rainbow effect for input box */
         input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -52,6 +54,7 @@
             transition: background-color 0.3s ease;
         }
 
+        /* Video player styling */
         iframe {
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -60,6 +63,7 @@
             display: none;
         }
 
+        /* Link status styling */
         .link-status {
             color: #ff0000;
             margin-top: 10px;
@@ -69,6 +73,7 @@
             color: #00ff00;
         }
 
+        /* Button styling */
         .open-button {
             width: 50px;
             height: 50px;
@@ -80,7 +85,7 @@
             border: none;
             cursor: pointer;
             position: absolute;
-            bottom: -150px;
+            bottom: -25px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -89,19 +94,7 @@
         }
 
         .open-button:active {
-            background-color: red;
-        }
-
-        #linkList {
-            width: 100%;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: rgba(43, 43, 43, 0.9);
-            border-radius: 15px;
-            color: #fff;
-            font-size: 14px;
-            overflow-y: auto;
-            max-height: 150px;
+            background-color: #ff0000;
         }
 
         @keyframes rainbow {
@@ -119,24 +112,17 @@
 
     <!-- Frame container -->
     <div class="frame-container">
+        <!-- Video panel -->
         <div class="video-container" id="videoContainer">
-            <input type="text" id="videoUrl" placeholder="..." oninput="verifyLink()">
+            <input type="text" id="videoUrl" placeholder="Paste Pornhub video link" oninput="verifyLink()">
             <span class="link-status" id="linkStatus"></span>
             <iframe id="videoPlayer" allowfullscreen></iframe>
         </div>
-        
-        <!-- Link List Box -->
-        <div id="linkList"></div>
-
-        <!-- Button to open Pornhub video in the embedded player -->
-        <button class="open-button" onclick="openPornhub()">V</button>
+        <!-- Button to open Pornhub in new tab -->
+        <button class="open-button" onclick="openVideo()">V</button>
     </div>
 
     <script>
-        window.onload = function() {
-            loadSavedLinks();
-        };
-
         function loadVideo(url) {
             const videoPlayer = document.getElementById("videoPlayer");
             const linkStatus = document.getElementById("linkStatus");
@@ -149,7 +135,6 @@
                     linkStatus.textContent = "Valid link.";
                     linkStatus.className = "link-status valid";
                     hideLinkStatusAfterDelay();
-                    addLinkToList(url);
                 } else {
                     videoPlayer.style.display = "none";
                     linkStatus.textContent = "Video ID not found.";
@@ -177,45 +162,18 @@
             }, 500);
         }
 
-        function addLinkToList(url) {
-            const linkList = document.getElementById("linkList");
-            
-            if (!Array.from(linkList.children).some(item => item.textContent === url)) {
-                const linkItem = document.createElement("div");
-                linkItem.textContent = url;
-                linkItem.style.cursor = "pointer";
-                linkItem.addEventListener("click", () => pasteToInput(url));
-                linkList.appendChild(linkItem);
-                
-                saveLinksToLocalStorage(url);
+        // Opens the video in iframe on the same page
+        function openVideo() {
+            const url = document.getElementById("videoUrl").value;
+            loadVideo(url);
+        }
+
+        // Block opening new tabs or redirections
+        document.addEventListener('click', function(event) {
+            const target = event.target.closest('a');
+            if (target && target.href.includes('pornhub.com')) {
+                event.preventDefault(); // Block direct link opening
             }
-        }
-
-        function pasteToInput(url) {
-            document.getElementById("videoUrl").value = url;
-            verifyLink();
-        }
-
-        function openPornhub() {
-            const videoUrl = document.getElementById("videoUrl").value;
-            loadVideo(videoUrl); 
-        }
-
-        function saveLinksToLocalStorage(url) {
-            let savedLinks = JSON.parse(localStorage.getItem("links")) || [];
-            if (!savedLinks.includes(url)) {
-                savedLinks.push(url);
-                localStorage.setItem("links", JSON.stringify(savedLinks));
-            }
-        }
-
-        function loadSavedLinks() {
-            const savedLinks = JSON.parse(localStorage.getItem("links")) || [];
-            savedLinks.forEach(url => addLinkToList(url));
-        }
-
-        document.getElementById("videoPlayer").addEventListener("click", (event) => {
-            event.preventDefault();
         });
     </script>
 </body>
