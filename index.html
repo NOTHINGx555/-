@@ -58,7 +58,6 @@
             border-radius: 15px;
             border: none;
             display: none;
-            pointer-events: none; /* Disable clicks on iframe */
         }
 
         .link-status {
@@ -89,8 +88,8 @@
             transition: background-color 0.3s ease;
         }
 
-        .open-button:hover {
-            background-color: #cc5200;
+        .open-button:active {
+            background-color: red;
         }
 
         #linkList {
@@ -129,12 +128,11 @@
         <!-- Link List Box -->
         <div id="linkList"></div>
 
-        <!-- Button to open Pornhub in new tab -->
+        <!-- Button to open Pornhub video in the embedded player -->
         <button class="open-button" onclick="openPornhub()">V</button>
     </div>
 
     <script>
-        // Load saved links from localStorage
         window.onload = function() {
             loadSavedLinks();
         };
@@ -182,7 +180,6 @@
         function addLinkToList(url) {
             const linkList = document.getElementById("linkList");
             
-            // Check if link already exists in the list
             if (!Array.from(linkList.children).some(item => item.textContent === url)) {
                 const linkItem = document.createElement("div");
                 linkItem.textContent = url;
@@ -190,7 +187,6 @@
                 linkItem.addEventListener("click", () => pasteToInput(url));
                 linkList.appendChild(linkItem);
                 
-                // Save to localStorage
                 saveLinksToLocalStorage(url);
             }
         }
@@ -201,7 +197,8 @@
         }
 
         function openPornhub() {
-            window.open("https://www.pornhub.com", "_blank");
+            const videoUrl = document.getElementById("videoUrl").value;
+            loadVideo(videoUrl); 
         }
 
         function saveLinksToLocalStorage(url) {
@@ -217,7 +214,6 @@
             savedLinks.forEach(url => addLinkToList(url));
         }
 
-        // Block direct click on iframe
         document.getElementById("videoPlayer").addEventListener("click", (event) => {
             event.preventDefault();
         });
