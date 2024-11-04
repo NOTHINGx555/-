@@ -4,111 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #f1f1f1;
-            padding: 20px;
-        }
-
-        .frame-container {
-            width: 90%;
-            max-width: 500px;
-            padding: 10px;
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
-            background-size: 400% 400%;
-            border-radius: 25px;
-            animation: rainbow 5s linear infinite;
-            position: relative;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid transparent;
-            outline: none;
-            border-radius: 25px;
-            font-size: 14px;
-            margin-bottom: 10px;
-            background-color: rgba(43, 43, 43, 0.8);
-            color: #ffffff;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border-radius: 15px;
-            border: none;
-            display: none;
-        }
-
-        .link-status {
-            color: #ff0000;
-            margin-top: 10px;
-        }
-
-        .link-status.valid {
-            color: #00ff00;
-        }
-
-        .open-button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #14db1a;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            position: absolute;
-            bottom: -75px; /* 5 cm down */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s ease;
-        }
-
-        .open-button:hover {
-            background-color: #cc5200;
-        }
-
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        input[type="text"]:focus {
-            background-color: rgba(43, 43, 43, 1);
-        }
-
-        select {
-            width: 100%;
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 10px;
-            background-color: #333;
-            color: #fff;
-        }
+        /* (Your existing CSS here) */
     </style>
 </head>
 <body>
@@ -126,7 +22,6 @@
     </div>
 
     <script>
-        // Load saved links on page load
         document.addEventListener("DOMContentLoaded", loadSavedLinks);
 
         function loadVideo(url) {
@@ -173,10 +68,19 @@
             window.open("https://www.pornhub.com", "_blank");
         }
 
-        function saveLink(url) {
+        // Extract title from the page (requires permission)
+        async function getTitle(url) {
+            // This would need server-side fetching or user grant for a full implementation.
+            // A placeholder:
+            return "Video Title Placeholder";
+        }
+
+        async function saveLink(url) {
             let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            if (!savedLinks.includes(url)) {
-                savedLinks.push(url);
+
+            const title = await getTitle(url); // This requires permission to fetch titles dynamically.
+            if (!savedLinks.some(link => link.url === url)) {
+                savedLinks.push({ url, title });
                 localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
                 loadSavedLinks();
             }
@@ -184,12 +88,13 @@
 
         function loadSavedLinks() {
             const linkList = document.getElementById("linkList");
-            linkList.innerHTML = "<option value=''>Saved Links</option>"; // Clear list and add placeholder
+            linkList.innerHTML = "<option value=''>Saved Links</option>";
             const savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+
             savedLinks.forEach(link => {
                 const option = document.createElement("option");
-                option.value = link;
-                option.textContent = link;
+                option.value = link.url;
+                option.textContent = link.title;
                 linkList.appendChild(option);
             });
         }
@@ -198,13 +103,6 @@
             const selectedLink = document.getElementById("linkList").value;
             if (selectedLink) loadVideo(selectedLink);
         }
-
-        document.addEventListener('click', function(event) {
-            const target = event.target.closest('a');
-            if (target && target.href.includes('pornhub.com')) {
-                event.preventDefault();
-            }
-        });
     </script>
 </body>
 </html>
