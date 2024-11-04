@@ -3,122 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background-color: #000000; /* Black background */
-            color: #008000; /* Green text */
-            padding: 20px;
-        }
-
-        .frame-container {
-            width: 90%;
-            max-width: 500px;
-            padding: 10px;
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #1c1c1c; /* Dark background */
-            border-radius: 15px;
-            border: 2px solid #008000; /* Green border */
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #008000;
-            border-radius: 10px;
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #ffffff;
-            background-color: #333333; /* Darker background */
-            text-align: center;
-        }
-
-        iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border-radius: 10px;
-            border: none;
-            display: none;
-        }
-
-        .link-status {
-            color: #ff0000;
-            margin-top: 10px;
-        }
-
-        .link-status.valid {
-            color: #008000;
-        }
-
-        .copy-button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #008000;
-            color: #ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 10px;
-            background-color: #333333;
-            color: #008000;
-            border: 2px solid #008000;
-        }
-
-        /* Mute Button Styles */
-        .mute-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #008000;
-            color: #ffffff;
-            border: none;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Link Saver</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Mute Button -->
-    <button class="mute-button" onclick="toggleMute()">Mute</button>
-
     <div class="frame-container">
+        <!-- Textbox for Link Entry -->
         <input type="text" id="videoUrl" placeholder="Enter Pornhub link..." oninput="verifyLink()">
         <span class="link-status" id="linkStatus"></span>
         <iframe id="videoPlayer" allowfullscreen></iframe>
 
+        <!-- Dropdown to display saved links -->
         <select id="linkList" onchange="loadSelectedLink()">
             <option value="">Saved Links</option>
         </select>
         
-        <button class="copy-button" onclick="copyLinkToClipboard()">V</button>
+        <!-- Buttons for Copy, Add, and Delete -->
+        <div class="button-container">
+            <button class="copy-button" onclick="copyLinkToTextBox()">V</button>
+            <button class="add-button" onclick="addLink()">Add Link</button>
+            <button class="delete-button" onclick="deleteLink()">Delete Link</button>
+        </div>
     </div>
 
     <script>
-        let isMuted = false;
-
+        // Load saved links on page load
         document.addEventListener("DOMContentLoaded", loadSavedLinks);
 
         function loadVideo(url) {
@@ -151,68 +61,57 @@
         }
 
         function saveLink(url) {
-            // Simulate saving link in save.lua
-            fetch('save.lua', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ link: url }),
-            })
-            .then(response => response.json())
-            .then(data => loadSavedLinks())
-            .catch(error => console.error('Error saving link:', error));
+            // Save the link to localStorage (or an external file in a real server setup)
+            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+            if (!savedLinks.includes(url)) {
+                savedLinks.push(url);
+                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+                loadSavedLinks(); // Refresh the dropdown list
+            }
         }
 
         function loadSavedLinks() {
-            // Load links from save.lua (simulated for the browser)
-            fetch('save.lua')
-                .then(response => response.json())
-                .then(data => {
-                    const linkList = document.getElementById("linkList");
-                    linkList.innerHTML = "<option value=''>Saved Links</option>"; // Clear list
+            const linkList = document.getElementById("linkList");
+            linkList.innerHTML = "<option value=''>Saved Links</option>"; // Clear list and add placeholder
 
-                    data.links.forEach(link => {
-                        if (link) { // Only add non-empty links
-                            const option = document.createElement("option");
-                            option.value = link;
-                            option.textContent = link;
-                            linkList.appendChild(option);
-                        }
-                    });
-                })
-                .catch(error => console.error('Error loading links:', error));
+            // Get saved links from localStorage
+            const savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+            savedLinks.forEach(link => {
+                const option = document.createElement("option");
+                option.value = link;
+                option.textContent = link; // Display the full link
+                linkList.appendChild(option);
+            });
         }
 
         function loadSelectedLink() {
             const selectedLink = document.getElementById("linkList").value;
-            if (selectedLink) loadVideo(selectedLink);
-        }
-
-        function copyLinkToClipboard() {
-            const link = document.getElementById("linkList").value;
-            if (link) {
-                navigator.clipboard.writeText(link)
-                    .then(() => alert("Link copied to clipboard"))
-                    .catch(err => console.error("Error copying link:", err));
+            if (selectedLink) {
+                document.getElementById("videoUrl").value = selectedLink;
+                loadVideo(selectedLink);
             }
         }
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.querySelectorAll("video, audio").forEach(media => {
-                media.muted = isMuted;
-            });
-            document.querySelector(".mute-button").textContent = isMuted ? "Unmute" : "Mute";
+        function copyLinkToTextBox() {
+            document.getElementById("videoUrl").value = "https://www.pornhub.com";
         }
 
-        // Block links from opening in a new page
-        document.addEventListener('click', function(event) {
-            if (event.target.tagName === 'A' && event.target.target === '_blank') {
-                event.preventDefault();
-                alert("Opening in new tabs is blocked.");
+        function addLink() {
+            const url = document.getElementById("videoUrl").value;
+            if (url) {
+                saveLink(url); // Save to localStorage
             }
-        });
+        }
+
+        function deleteLink() {
+            const url = document.getElementById("videoUrl").value;
+            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+
+            // Remove the link from saved links
+            savedLinks = savedLinks.filter(link => link !== url);
+            localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+            loadSavedLinks(); // Refresh the dropdown list
+        }
     </script>
 </body>
 </html>
