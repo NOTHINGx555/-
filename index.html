@@ -15,7 +15,7 @@
             flex-direction: column;
             align-items: center;
             font-family: Arial, sans-serif;
-            background-color: #ffffff;
+            background-color: #000000; /* Black background */
             color: #008000; /* Green text */
             padding: 20px;
         }
@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f1f1f1; /* Light background */
+            background-color: #1c1c1c; /* Dark background */
             border-radius: 15px;
             border: 2px solid #008000; /* Green border */
         }
@@ -40,7 +40,8 @@
             border-radius: 10px;
             font-size: 14px;
             margin-bottom: 10px;
-            color: #008000;
+            color: #ffffff;
+            background-color: #333333; /* Darker background */
             text-align: center;
         }
 
@@ -61,7 +62,7 @@
             color: #008000;
         }
 
-        .open-button {
+        .copy-button {
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -79,7 +80,7 @@
             padding: 10px;
             margin-top: 15px;
             border-radius: 10px;
-            background-color: #f1f1f1;
+            background-color: #333333;
             color: #008000;
             border: 2px solid #008000;
         }
@@ -93,10 +94,10 @@
         <iframe id="videoPlayer" allowfullscreen></iframe>
 
         <select id="linkList" onchange="loadSelectedLink()">
-            <option value="">Saved Titles</option>
+            <option value="">Saved Links</option>
         </select>
         
-        <button class="open-button" onclick="openPornhub()">V</button>
+        <button class="copy-button" onclick="copyLinkToClipboard()">V</button>
     </div>
 
     <script>
@@ -121,7 +122,7 @@
                 }
             } else {
                 videoPlayer.style.display = "none";
-                linkStatus.textContent = "Invalid link. Must be from Pornhub.";
+                linkStatus.textContent = "Invalid link. Ensure it's from Pornhub.";
                 linkStatus.className = "link-status";
             }
         }
@@ -131,45 +132,52 @@
             loadVideo(url);
         }
 
-        function openPornhub() {
-            window.open("https://www.pornhub.com", "_blank");
-        }
-
-        async function getTitle(url) {
-            return "Video Title Placeholder"; // Placeholder title
-        }
-
-        async function saveLink(url) {
-            const title = await getTitle(url); // Placeholder title fetching
-            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            if (!savedLinks.some(link => link.url === url)) {
-                savedLinks.push({ url, title });
-                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
-                saveToLua(savedLinks);
-                loadSavedLinks();
-            }
-        }
-
-        function saveToLua(links) {
-            const luaContent = links.map(link => `linkData["${link.title}"] = "${link.url}"`).join("\n");
-            console.log(luaContent); // Use this to save to a GitHub file (save.lua)
+        function saveLink(url) {
+            // Simulate saving link in save.lua
+            fetch('save.lua', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ link: url }),
+            })
+            .then(response => response.json())
+            .then(data => loadSavedLinks())
+            .catch(error => console.error('Error saving link:', error));
         }
 
         function loadSavedLinks() {
-            const linkList = document.getElementById("linkList");
-            linkList.innerHTML = "<option value=''>Saved Titles</option>"; // Clear list and add placeholder
-            const savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            savedLinks.forEach(link => {
-                const option = document.createElement("option");
-                option.value = link.url;
-                option.textContent = link.title;
-                linkList.appendChild(option);
-            });
+            // Load links from save.lua (simulated for the browser)
+            fetch('save.lua')
+                .then(response => response.json())
+                .then(data => {
+                    const linkList = document.getElementById("linkList");
+                    linkList.innerHTML = "<option value=''>Saved Links</option>"; // Clear list
+
+                    data.links.forEach(link => {
+                        if (link) { // Only add non-empty links
+                            const option = document.createElement("option");
+                            option.value = link;
+                            option.textContent = link;
+                            linkList.appendChild(option);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading links:', error));
         }
 
         function loadSelectedLink() {
             const selectedLink = document.getElementById("linkList").value;
             if (selectedLink) loadVideo(selectedLink);
+        }
+
+        function copyLinkToClipboard() {
+            const link = document.getElementById("linkList").value;
+            if (link) {
+                navigator.clipboard.writeText(link)
+                    .then(() => alert("Link copied to clipboard"))
+                    .catch(err => console.error("Error copying link:", err));
+            }
         }
     </script>
 </body>
