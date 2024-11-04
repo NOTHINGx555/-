@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🫵</title>
+    <title></title>
     <style>
         body {
             background-color: #121212;
@@ -76,23 +76,6 @@
         .button:hover {
             opacity: 1;
         }
-        /* Styl przycisku mute/unmute */
-        .mute-button {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: #555;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
     </style>
 </head>
 <body>
@@ -115,9 +98,6 @@
             <button class="button" onclick="showCopyLink()" id="phButton">PH</button>
         </div>
     </div>
-
-    <!-- Przycisk mute/unmute -->
-    <button class="mute-button" id="muteButton" onclick="toggleMute()">🔇</button>
 
     <script>
         document.addEventListener("DOMContentLoaded", loadSavedLinks);
@@ -166,8 +146,8 @@
                 option.value = url;
                 option.textContent = url;
                 linkList.appendChild(option);
-                document.getElementById("videoUrl").value = '';
                 saveLink(url);
+                document.getElementById("videoUrl").value = '';
             }
         }
 
@@ -178,15 +158,19 @@
 
         function saveLink(url) {
             let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            savedLinks.push(url);
-            localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+            if (!savedLinks.includes(url)) {
+                savedLinks.push(url);
+                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+            }
         }
 
         function removeLink() {
             const linkList = document.getElementById("linkList");
-            if (linkList.selectedIndex !== 0) {
+            const selectedLink = linkList.value;
+
+            if (selectedLink) {
                 let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-                savedLinks = savedLinks.filter(link => link !== linkList.value);
+                savedLinks = savedLinks.filter(link => link !== selectedLink);
                 localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
                 linkList.remove(linkList.selectedIndex);
             }
@@ -207,24 +191,6 @@
 
         function showSmallFrame() {
             document.getElementById("smallFrame").style.opacity = "1";
-        }
-
-        // Utworzenie AudioContext do globalnego wyciszenia
-        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        let gainNode = audioContext.createGain();
-        gainNode.gain.value = 1; // Domyślnie ustawione na maksymalną głośność
-        gainNode.connect(audioContext.destination);
-
-        // Przełączanie mute/unmute całej strony
-        function toggleMute() {
-            const muteButton = document.getElementById("muteButton");
-            if (gainNode.gain.value === 1) {
-                gainNode.gain.value = 0; // Wyciszenie
-                muteButton.textContent = "🔊";
-            } else {
-                gainNode.gain.value = 1; // Włączenie dźwięku
-                muteButton.textContent = "🔇";
-            }
         }
 
         function loadSelectedLink() {
