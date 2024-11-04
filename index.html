@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>🌒</title>
     <style>
         body {
             background-color: #121212;
@@ -108,10 +108,12 @@
             linkList.innerHTML = "<option value=''>Zapisane linki</option>";
             
             savedLinks.forEach(link => {
-                const option = document.createElement("option");
-                option.value = link;
-                option.textContent = link;
-                linkList.appendChild(option);
+                if (typeof link === 'string') { // Sprawdzamy, czy link jest stringiem, aby uniknąć obiektów
+                    const option = document.createElement("option");
+                    option.value = link;
+                    option.textContent = link;
+                    linkList.appendChild(option);
+                }
             });
         }
 
