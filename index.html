@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👉💀👈</title>
+    <title>🫵</title>
     <style>
         body {
             background-color: #121212;
@@ -209,17 +209,20 @@
             document.getElementById("smallFrame").style.opacity = "1";
         }
 
-        // Funkcja do wyciszania i odciszania całej strony
+        // Utworzenie AudioContext do globalnego wyciszenia
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let gainNode = audioContext.createGain();
+        gainNode.gain.value = 1; // Domyślnie ustawione na maksymalną głośność
+        gainNode.connect(audioContext.destination);
+
+        // Przełączanie mute/unmute całej strony
         function toggleMute() {
             const muteButton = document.getElementById("muteButton");
-            if (document.querySelectorAll("video, audio").length > 0) {
-                document.querySelectorAll("video, audio").forEach(media => {
-                    media.muted = !media.muted;
-                });
-            }
-            if (muteButton.textContent === "🔇") {
+            if (gainNode.gain.value === 1) {
+                gainNode.gain.value = 0; // Wyciszenie
                 muteButton.textContent = "🔊";
             } else {
+                gainNode.gain.value = 1; // Włączenie dźwięku
                 muteButton.textContent = "🔇";
             }
         }
