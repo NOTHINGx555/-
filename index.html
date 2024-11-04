@@ -84,9 +84,25 @@
             color: #008000;
             border: 2px solid #008000;
         }
+
+        /* Mute Button Styles */
+        .mute-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #008000;
+            color: #ffffff;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Mute Button -->
+    <button class="mute-button" onclick="toggleMute()">Mute</button>
 
     <div class="frame-container">
         <input type="text" id="videoUrl" placeholder="Enter Pornhub link..." oninput="verifyLink()">
@@ -101,6 +117,8 @@
     </div>
 
     <script>
+        let isMuted = false;
+
         document.addEventListener("DOMContentLoaded", loadSavedLinks);
 
         function loadVideo(url) {
@@ -114,7 +132,7 @@
                     videoPlayer.style.display = "block";
                     linkStatus.textContent = "Valid link.";
                     linkStatus.className = "link-status valid";
-                    saveLink(url);
+                    saveLink(url); // Save link if valid
                 } else {
                     videoPlayer.style.display = "none";
                     linkStatus.textContent = "Video ID not found.";
@@ -179,6 +197,22 @@
                     .catch(err => console.error("Error copying link:", err));
             }
         }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.querySelectorAll("video, audio").forEach(media => {
+                media.muted = isMuted;
+            });
+            document.querySelector(".mute-button").textContent = isMuted ? "Unmute" : "Mute";
+        }
+
+        // Block links from opening in a new page
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName === 'A' && event.target.target === '_blank') {
+                event.preventDefault();
+                alert("Opening in new tabs is blocked.");
+            }
+        });
     </script>
 </body>
 </html>
