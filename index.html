@@ -3,114 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Saver</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>👉💀👈</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .frame-container {
+            padding: 20px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .input-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .small-frame {
+            padding: 10px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            bottom: 20px;
+            transition: opacity 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        select {
+            max-width: 200px;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .button {
+            padding: 8px 12px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .button:hover {
+            opacity: 1;
+        }
+        /* Styl przycisku mute/unmute */
+        .mute-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
 
     <div class="frame-container">
-        <!-- Textbox for Link Entry -->
-        <input type="text" id="videoUrl" placeholder="Enter Pornhub link..." oninput="verifyLink()">
-        <span class="link-status" id="linkStatus"></span>
-        <iframe id="videoPlayer" allowfullscreen></iframe>
-
-        <!-- Dropdown to display saved links -->
-        <select id="linkList" onchange="loadSelectedLink()">
-            <option value="">Saved Links</option>
-        </select>
+        <div class="input-container">
+            <input type="text" id="videoUrl" placeholder="Wpisz link do Pornhub..." onfocus="hideSmallFrame()" onblur="showSmallFrame()" oninput="verifyLink()" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #fff;">
+        </div>
         
-        <!-- Buttons for Copy, Add, and Delete -->
+        <iframe id="videoPlayer" allowfullscreen style="width: 100%; height: 200px; display: none; border-radius: 5px; border: 1px solid #555;"></iframe>
+    </div>
+
+    <div class="small-frame" id="smallFrame">
+        <select id="linkList" onchange="loadSelectedLink()">
+            <option value="">Zapisane linki</option>
+        </select>
         <div class="button-container">
-            <button class="copy-button" onclick="copyLinkToTextBox()">V</button>
-            <button class="add-button" onclick="addLink()">Add Link</button>
-            <button class="delete-button" onclick="deleteLink()">Delete Link</button>
+            <button class="button" onclick="addLink()">+</button>
+            <button class="button" onclick="removeLink()">-</button>
+            <button class="button" onclick="showCopyLink()" id="phButton">PH</button>
         </div>
     </div>
 
+    <!-- Przycisk mute/unmute -->
+    <button class="mute-button" id="muteButton" onclick="toggleMute()">🔇</button>
+
     <script>
-        // Load saved links on page load
         document.addEventListener("DOMContentLoaded", loadSavedLinks);
 
-        function loadVideo(url) {
+        function loadSavedLinks() {
+            const linkList = document.getElementById("linkList");
+            const savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+            linkList.innerHTML = "<option value=''>Zapisane linki</option>";
+            
+            savedLinks.forEach(link => {
+                const option = document.createElement("option");
+                option.value = link;
+                option.textContent = link;
+                linkList.appendChild(option);
+            });
+        }
+
+        function verifyLink() {
+            const url = document.getElementById("videoUrl").value;
+            playVideo(url);
+        }
+
+        function playVideo(url) {
             const videoPlayer = document.getElementById("videoPlayer");
-            const linkStatus = document.getElementById("linkStatus");
 
             if (url.includes("pornhub.com")) {
                 const videoId = url.split("viewkey=")[1];
                 if (videoId) {
                     videoPlayer.src = `https://www.pornhub.com/embed/${videoId}`;
                     videoPlayer.style.display = "block";
-                    linkStatus.textContent = "Valid link.";
-                    linkStatus.className = "link-status valid";
-                    saveLink(url); // Save link if valid
                 } else {
                     videoPlayer.style.display = "none";
-                    linkStatus.textContent = "Video ID not found.";
-                    linkStatus.className = "link-status";
                 }
             } else {
                 videoPlayer.style.display = "none";
-                linkStatus.textContent = "Invalid link. Ensure it's from Pornhub.";
-                linkStatus.className = "link-status";
+                document.getElementById("phButton").textContent = "Skopiuj PH Link";
             }
-        }
-
-        function verifyLink() {
-            const url = document.getElementById("videoUrl").value;
-            loadVideo(url);
-        }
-
-        function saveLink(url) {
-            // Save the link to localStorage (or an external file in a real server setup)
-            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            if (!savedLinks.includes(url)) {
-                savedLinks.push(url);
-                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
-                loadSavedLinks(); // Refresh the dropdown list
-            }
-        }
-
-        function loadSavedLinks() {
-            const linkList = document.getElementById("linkList");
-            linkList.innerHTML = "<option value=''>Saved Links</option>"; // Clear list and add placeholder
-
-            // Get saved links from localStorage
-            const savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
-            savedLinks.forEach(link => {
-                const option = document.createElement("option");
-                option.value = link;
-                option.textContent = link; // Display the full link
-                linkList.appendChild(option);
-            });
-        }
-
-        function loadSelectedLink() {
-            const selectedLink = document.getElementById("linkList").value;
-            if (selectedLink) {
-                document.getElementById("videoUrl").value = selectedLink;
-                loadVideo(selectedLink);
-            }
-        }
-
-        function copyLinkToTextBox() {
-            document.getElementById("videoUrl").value = "https://www.pornhub.com";
         }
 
         function addLink() {
             const url = document.getElementById("videoUrl").value;
-            if (url) {
-                saveLink(url); // Save to localStorage
+            const linkList = document.getElementById("linkList");
+
+            if (url && !linkAlreadyExists(url)) {
+                const option = document.createElement("option");
+                option.value = url;
+                option.textContent = url;
+                linkList.appendChild(option);
+                document.getElementById("videoUrl").value = '';
+                saveLink(url);
             }
         }
 
-        function deleteLink() {
-            const url = document.getElementById("videoUrl").value;
-            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+        function linkAlreadyExists(url) {
+            const linkList = document.getElementById("linkList");
+            return Array.from(linkList.options).some(option => option.value === url);
+        }
 
-            // Remove the link from saved links
-            savedLinks = savedLinks.filter(link => link !== url);
+        function saveLink(url) {
+            let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+            savedLinks.push(url);
             localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
-            loadSavedLinks(); // Refresh the dropdown list
+        }
+
+        function removeLink() {
+            const linkList = document.getElementById("linkList");
+            if (linkList.selectedIndex !== 0) {
+                let savedLinks = JSON.parse(localStorage.getItem("savedLinks")) || [];
+                savedLinks = savedLinks.filter(link => link !== linkList.value);
+                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+                linkList.remove(linkList.selectedIndex);
+            }
+        }
+
+        function showCopyLink() {
+            const phLink = "https://www.pornhub.com";
+            navigator.clipboard.writeText(phLink).then(() => {
+                document.getElementById("phButton").textContent = "PH";
+            }).catch(err => {
+                console.error("Błąd podczas kopiowania linku: ", err);
+            });
+        }
+
+        function hideSmallFrame() {
+            document.getElementById("smallFrame").style.opacity = "0";
+        }
+
+        function showSmallFrame() {
+            document.getElementById("smallFrame").style.opacity = "1";
+        }
+
+        // Funkcja do wyciszania i odciszania całej strony
+        function toggleMute() {
+            const muteButton = document.getElementById("muteButton");
+            if (document.querySelectorAll("video, audio").length > 0) {
+                document.querySelectorAll("video, audio").forEach(media => {
+                    media.muted = !media.muted;
+                });
+            }
+            if (muteButton.textContent === "🔇") {
+                muteButton.textContent = "🔊";
+            } else {
+                muteButton.textContent = "🔇";
+            }
+        }
+
+        function loadSelectedLink() {
+            const linkList = document.getElementById("linkList");
+            const selectedLink = linkList.value;
+            if (selectedLink) {
+                document.getElementById("videoUrl").value = selectedLink;
+                playVideo(selectedLink);
+            }
         }
     </script>
 </body>
